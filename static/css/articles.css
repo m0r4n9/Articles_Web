@@ -1,0 +1,69 @@
+@import "reset.css";
+@import "navbar.css";
+@import "articleCard.css";
+
+.app {
+    width: 100vw;
+    min-height: 100vh;
+    background-color: #F0F0F0;
+}
+
+.container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
+
+.content__filters {
+    margin-top: 8px;
+}
+
+.category__form {
+    display: flex;
+    flex-direction: column;
+}
+
+.category__content {
+    display: flex;
+    margin-top: 8px;
+    gap: 30px;
+}
+
+.category__footer {
+    margin-top: 12px;
+}
+
+.category__footer input {
+    padding: 8px 16px;
+    border-radius: 4px;
+}
+
+.category__submit {
+    color: white;
+    font-size: 14px;
+    background-color: green;
+}
+
+.content__footer {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+    padding: 20px 0;
+}
+
+.content__pagination {
+    display: flex;
+    gap: 30px;
+}
+
+.content__pagination .active {
+    color: white;
+    background-color: #558DA9;
+    padding: 2px;
+    border-radius: 2px;
+}
+
+.content__pagination .active a {
+    color: white;
+}

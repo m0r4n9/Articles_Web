@@ -1,0 +1,14 @@
+@import "reset.css";
+@import "articleCard.css";
+
+.app {
+    width: 100vw;
+    min-height: 100vh;
+}
+
+.container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}

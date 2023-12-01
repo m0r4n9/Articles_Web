@@ -1,0 +1,62 @@
+
+.container__navbar {
+    width: 100%;
+    background-color: white;
+    display: flex;
+    justify-content: center;
+
+    /*position: sticky;*/
+    /*top: 0;*/
+    /*left: 0;*/
+    /*right: 0;*/
+
+    /*z-index: 10;*/
+}
+
+.navbar {
+    max-width: 80%;
+    width: 100%;
+
+    display: flex;
+    justify-content: space-between;
+
+    padding: 20px 0;
+
+}
+
+.navbar__leftSide {
+
+}
+
+.navbar__list {
+    display: flex;
+    gap: 40px;
+}
+
+.navbar__link {
+    color: #6f7577;
+}
+
+.navbar__list .active {
+    color: black;
+
+    border-bottom: 1px solid blue;
+}
+
+.navbar__btn {
+    padding: 8px 14px;
+    border-radius: 4px;
+    color: white;
+    background-color: #558DA9;
+
+    transition: background-color 0.2s ease;
+}
+
+.navbar__btn:hover {
+    background-color: #2c4a59;
+}
+
+.navbar__btnWrite {
+    margin-right: 10px;
+    cursor: pointer;
+}

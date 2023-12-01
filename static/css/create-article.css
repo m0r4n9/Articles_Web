@@ -1,0 +1,66 @@
+@import "reset.css";
+@import "navbar.css";
+
+.app {
+    width: 100vw;
+    min-height: 100vh;
+    background-color: #F0F0F0;
+}
+
+.container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
+
+.content {
+
+    min-width: 551px;
+    margin-top: 20px;
+    padding: 20px 24px;
+    background-color: #FFF;
+    border-radius: 4px;
+
+    box-shadow: 0 0 94px -25px rgba(0,0,0,0.2);
+}
+
+.form__wrapper {
+    display: flex;
+    flex-direction: column;
+}
+
+.form__wrapper:not(:first-child) {
+    margin-top: 20px;
+}
+
+.form__input {
+    margin-top: 4px;
+    padding: 4px 8px;
+    border: 1px solid #bbbbbb;
+    border-radius: 2px;
+}
+
+.blocks-container {
+    margin-top: 20px;
+    padding: 10px 0;
+    border-top: 1px solid #bbbbbb;
+}
+
+
+.form__footer {
+    margin-top: 30px;
+}
+
+.form__footer input {
+    color: white;
+    padding: 10px 14px;
+    border-radius: 4px;
+    background-color: green;
+
+    transition: background-color .3s ease;
+}
+
+.form__footer input:hover {
+    background-color: #005700;
+}
