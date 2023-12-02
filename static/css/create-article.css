@@ -22,7 +22,7 @@
     background-color: #FFF;
     border-radius: 4px;
 
-    box-shadow: 0 0 94px -25px rgba(0,0,0,0.2);
+    box-shadow: 0 0 94px -25px rgba(0, 0, 0, 0.2);
 }
 
 .form__wrapper {
@@ -63,4 +63,68 @@
 
 .form__footer input:hover {
     background-color: #005700;
+}
+
+.block__wrapper {
+    display: flex;
+    flex-direction: column;
+
+    margin-top: 20px;
+    padding: 10px 0;
+    border-top: 1px solid #bbbbbb;
+}
+
+.block__content {
+    display: flex;
+    flex-direction: column;
+
+    margin-top: 10px;
+    gap: 12px;
+}
+
+.block__content textarea {
+    max-width: 550px;
+    max-height: 220px;
+}
+
+
+.block__addBtn button {
+    color: white;
+    background-color: #00b600;
+
+    padding: 6px 12px;
+    border-radius: 4px;
+
+    transition: background-color .2s ease;
+}
+
+.block__addBtn button:hover {
+    background-color: #008300;
+}
+
+.block__removeBtn {
+    display: flex;
+    justify-content: center;
+    margin-top: 8px;
+}
+
+.removeBlockButton {
+    width: 120px;
+
+    padding: 6px 12px;
+    margin: 20px auto 0;
+
+    border-radius: 4px;
+    color: white;
+    background-color: rgba(255, 0, 0, 0.83);
+
+    transition: background-color .2s ease;
+}
+
+.removeBlockButton:hover {
+    background-color: rgba(183, 0, 0, 0.83);
+}
+
+.block-deleted {
+    display: none;
 }
