@@ -20,7 +20,7 @@ FROM
     (
         SELECT
             article_id,
-            MAX(id) AS block_id
+            MIN(id) AS block_id
         FROM
             web.blocks
         WHERE

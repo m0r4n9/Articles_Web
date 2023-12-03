@@ -1,0 +1,52 @@
+@import "reset.css";
+@import "navbar.css";
+
+.card {
+    width: 100%;
+    max-width: 50%;
+
+    margin-top: 24px;
+    padding: 20px;
+
+    background-color: white;
+    border-radius: 4px;
+
+    font-size: 18px;
+}
+
+.card__header {
+    padding-bottom: 10px;
+    border-bottom: 1px solid rgba(104, 104, 104, 0.5);
+}
+
+.card__content {
+    margin-top: 20px;
+}
+
+.card__subtitle {
+
+}
+
+.card__list {
+    list-style: circle;
+
+    margin-top: 10px;
+    padding-left: 20px;
+}
+
+.card__changeData {
+    margin-top: 16px;
+}
+
+.card__changeData a {
+    padding: 5px 8px;
+    border: 1px solid black;;
+    border-radius: 2px;
+
+    transition: background-color .2s ease, color .2s ease;
+}
+
+.card__changeData a:hover {
+    background-color: black;
+    color: white;
+}

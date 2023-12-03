@@ -1,0 +1,33 @@
+.navbar {
+    display: flex;
+    justify-content: space-between;
+
+    padding: 20px 40px;
+
+    background-color: #558cb7;
+
+    color: white;
+    font-size: 18px;
+}
+
+.navbar__list {
+    display: flex;
+    justify-content: space-between;
+    gap: 40px;
+}
+
+.list__item a {
+    color: white;
+    font-weight: 600;
+    letter-spacing: 2px;
+}
+
+.navbar__right {
+
+}
+
+.navbar__right a {
+    background-color: white;
+    border-radius: 4px;
+    padding: 6px 10px;
+}

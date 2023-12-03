@@ -19,12 +19,13 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $new_file_name = uniqid('', true) . "." . $file_ext;
     $destination = "static/images/" . $new_file_name;
 
-    move_uploaded_file($file_tmp, $destination);
+
 
     $sql_insert_article = "insert into articles (id, title, category, rating, image, user_id) values (null, '$title_article', '$category', 0, '$destination', $user_id);";
     $article = mysqli_query($connect, $sql_insert_article);
 
     if ($article) {
+        move_uploaded_file($file_tmp, $destination);
         $article_id = mysqli_insert_id($connect);
 
         $counter = 1;

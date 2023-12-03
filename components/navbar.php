@@ -20,7 +20,8 @@ if (isset($_SESSION["user_id"])) {
                            class="navbar__link <?= ($activePage === 'articles') ? 'active' : '' ?>">Статьи</a>
                     </li>
                     <li>
-                        <a href="#" class="navbar__link">Вопросы</a>
+                        <a href="../questions.php"
+                           class="navbar__link <?= ($activePage === 'questions') ? 'active' : '' ?>">Вопросы</a>
                     </li>
                 </ul>
             </nav>
@@ -31,7 +32,7 @@ if (isset($_SESSION["user_id"])) {
             if ($auth_bool) {
                 echo "<div>";
                 echo "<a href='../create-article.php' class='navbar__btnWrite'>Написать статью</a>";
-                echo "<a href='/' class='navbar__btn'>Профиль</a>";
+                echo "<a href='../profile.php' class='navbar__btn'>Профиль</a>";
                 echo "</div>";
             } else {
                 echo "<a href='../auth.php' class='navbar__btn'>Войти</a>";
