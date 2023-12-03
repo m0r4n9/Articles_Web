@@ -9,6 +9,7 @@ if (isset($_SESSION["user_id"])) {
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $title_article = $_POST["title"];
     $category = $_POST["category"];
+    $date = date("Y-m-d");
 
     $prev_image = $_FILES["image"];
 
@@ -21,8 +22,10 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
 
 
-    $sql_insert_article = "insert into articles (id, title, category, rating, image, user_id) values (null, '$title_article', '$category', 0, '$destination', $user_id);";
+    $sql_insert_article = "insert into articles (id, title, category, rating, image, user_id, date) values (null, '$title_article', '$category', 0, '$destination', $user_id, '$date');";
     $article = mysqli_query($connect, $sql_insert_article);
+
+    $new_article_id = mysqli_insert_id($connect);
 
     if ($article) {
         move_uploaded_file($file_tmp, $destination);
@@ -88,9 +91,13 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             $counter++;
         }
 
+
+
         if ($error_block) {
             echo "Произошла ошибка!";
         }
+
+        header("Location: ./article-details.php?id=" . $new_article_id);
 
     } else {
         echo "Error inserting article: " . mysqli_error($connect);

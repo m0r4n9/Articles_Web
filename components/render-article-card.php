@@ -4,7 +4,11 @@
 
         echo "<article>";
         echo "<div class='article'>";
-        echo "<div class='article__header'>Автор: " . $data["username"] . "</div>";
+//        echo "<div class='article__header'>Автор: " . $data["username"] . "</div>";
+        echo "<div>";
+        echo "<p>Автор: ".$data["username"]."</p>";
+        echo "<p>Дата: ".$data["date"]."</p>";
+        echo "</div>";
 
         echo "<div class='article__title'><a href='$link_details'>" . $data["title"] . "</a></div>";
 

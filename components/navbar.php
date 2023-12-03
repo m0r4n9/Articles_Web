@@ -4,6 +4,7 @@ session_start();
 
 if (isset($_SESSION["user_id"])) {
     $auth_bool = true;
+    $user_id = $_SESSION["user_id"];
 }
 ?>
 
@@ -32,7 +33,8 @@ if (isset($_SESSION["user_id"])) {
             if ($auth_bool) {
                 echo "<div>";
                 echo "<a href='../create-article.php' class='navbar__btnWrite'>Написать статью</a>";
-                echo "<a href='../profile.php' class='navbar__btn'>Профиль</a>";
+                $link_profile = "../profile.php?id=" . $user_id;
+                echo "<a href='$link_profile' class='navbar__btn'>Профиль</a>";
                 echo "</div>";
             } else {
                 echo "<a href='../auth.php' class='navbar__btn'>Войти</a>";

@@ -30,7 +30,7 @@ if (isset($_GET["id"])) {
 }
 
 $sql_query_question = "select questions.id, user_id, title, text, date, username from questions join web.users u on u.id = questions.user_id where questions.id = $id;";
-$sql_query_answer = "select answers.id, question_id, username, answers.text from answers join web.users u on u.id = answers.user_id where question_id = $id order by answers.id desc ;";
+$sql_query_answer = "select answers.id, question_id, username, answers.text, u.id as user_id from answers join web.users u on u.id = answers.user_id where question_id = $id order by answers.id desc ;";
 
 $question = mysqli_query($connect, $sql_query_question)->fetch_assoc();
 $answers = mysqli_query($connect, $sql_query_answer);
@@ -107,6 +107,9 @@ $answers = mysqli_query($connect, $sql_query_answer);
                         echo "<div>";
                         echo "<p>" . $data["text"] . "</p>";
                         echo "</div>";
+
+                        $link_profile = "./profile.php?id=" . $data["user_id"];
+                        echo "<a href='$link_profile'>Перейти в профиль</a>";
 
                         echo "</div>";
                     }

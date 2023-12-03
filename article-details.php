@@ -19,9 +19,9 @@ if ($id === -1) {
 }
 
 if ($id !== -1) {
-    $fetch_article = "select articles.id, title, rating, user_id, username from articles join web.users u on u.id = articles.user_id where articles.id = '$id';";
+    $fetch_article = "select articles.id, title, rating, user_id, date, username from articles join web.users u on u.id = articles.user_id where articles.id = '$id';";
     $fetch_blocks = "select * from blocks where article_id='$id'";
-    $fetch_comments = "select text, username from comments join web.users u on u.id = comments.user_id where article_id = '$id' order by comments.id desc";
+    $fetch_comments = "select u.id, text, username from comments join web.users u on u.id = comments.user_id where article_id = '$id' order by comments.id desc";
 
     $article_details = mysqli_query($connect, $fetch_article)->fetch_assoc();
     $blocks = mysqli_query($connect, $fetch_blocks);
@@ -59,7 +59,7 @@ if (isset($_SESSION["user_id"])) {
                 <div class="article__header">
                     <div class="article__author">
                         <p>Автор статьи: <?= $article_details["username"] ?></p>
-                        <p>Дата создания: 01.12.2023</p>
+                        <p>Дата создания: <?= $article_details["date"] ?></p>
                     </div>
                     <div class="article__title">
                         <h1><?= $article_details["title"] ?></h1>
@@ -109,6 +109,9 @@ if (isset($_SESSION["user_id"])) {
                         echo "<p style='margin-top: 12px; font-size: 18px;'>Пользователь: " . $data["username"] . "</p>";
 
                         echo "<p style='margin-top: 6px'>" . $data["text"] . "</p>";
+
+                        $link_profile = "./profile.php?id=" . $data["id"];
+                        echo "<a href='$link_profile' style='margin-top: 12px'>Перейти в профиль</a>";
 
                         echo "</div>";
                     }

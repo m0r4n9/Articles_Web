@@ -21,6 +21,7 @@ $slq_query = "SELECT
     articles.title,
     articles.rating,
     articles.image,
+    articles.date,
     articles.user_id,
     web.users.username,
     web.blocks.id AS block_id,

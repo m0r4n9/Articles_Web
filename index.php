@@ -5,6 +5,7 @@ $slq_query = "SELECT
     articles.id,
     articles.title,
     articles.rating,
+    articles.date,
     articles.image,
     articles.user_id,
     web.users.username,
