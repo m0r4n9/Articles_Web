@@ -17,6 +17,7 @@
 .card__header {
     padding-bottom: 10px;
     border-bottom: 1px solid rgba(104, 104, 104, 0.5);
+    font-size: 20px;
 }
 
 .card__content {
@@ -51,6 +52,13 @@
     color: white;
 }
 
+.logout {
+    width: 100px;
+    padding: 4px;
+    margin-top: 12px;
+    color: #380000;
+}
+
 .form__edit {
     margin-top: 16px;
 }
@@ -71,4 +79,30 @@
     background-color: lightgray;
     border-radius: 4px;
 
+}
+
+.save-btn {
+    width: 100px;
+    margin: 12px auto;
+    border: 1px solid black;
+    border-radius: 4px;
+    padding: 4px;
+    transition: background-color .3s ease, color .2s ease;
+}
+
+.save-btn:hover {
+    background-color: black;
+    color: white;
+}
+
+.change-btn {
+    border: 1px solid black;
+    border-radius: 4px;
+    padding: 4px 12px;
+    transition: background-color 0.3s ease, color 0.2s ease;
+}
+
+.change-btn:hover {
+    background-color: black;
+    color: white;
 }

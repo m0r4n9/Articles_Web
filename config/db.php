@@ -3,7 +3,7 @@
 $servername = "localhost";
 $username = "root";
 $password = "root";
-$dbname = "web";
+$dbname = "MindMerge";
 
 $connect = mysqli_connect($servername, $username, $password, $dbname);
 

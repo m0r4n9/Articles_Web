@@ -1,5 +1,5 @@
 <?php
-include_once("./config/db.php");
+require_once("./config/db.php");
 
 session_start();
 if (isset($_SESSION["user_id"])) {
@@ -34,6 +34,8 @@ $sql_query_answer = "select answers.id, question_id, username, answers.text, u.i
 
 $question = mysqli_query($connect, $sql_query_question)->fetch_assoc();
 $answers = mysqli_query($connect, $sql_query_answer);
+
+$can_delete = $question["user_id"] == $user_id;
 ?>
 
 <!doctype html>
@@ -44,7 +46,7 @@ $answers = mysqli_query($connect, $sql_query_answer);
           content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <link rel="stylesheet" href="./static/css/question-details.css">
-    <title>Document</title>
+    <title><?= $question["title"] ?></title>
 </head>
 <body>
 <div class="app">
@@ -54,6 +56,11 @@ $answers = mysqli_query($connect, $sql_query_answer);
 
         <div class="content">
             <div class="content__header">
+                <?php
+                if ($can_delete) {
+                    echo "<a style='color: red' href='./delete-question.php?id=".$question["id"]."'>Удалить</a>";
+                }
+                ?>
                 <p>Вопрос задал: <?= $question["username"] ?></p>
                 <p>Публикация вопроса: <?= $question["date"] ?></p>
                 <h1 class="content__title">

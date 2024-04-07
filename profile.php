@@ -1,13 +1,11 @@
 <?php
-
 session_start();
 $user_id = isset($_GET["id"]) ? intval($_GET["id"]) : -1;
-
 if (isset($_SESSION["user_id"]) && intval($_SESSION["user_id"]) === $user_id) {
     $can_edit = true;
 }
 
-include_once("./config/db.php");
+require_once("./config/db.php");
 
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $username = $_POST["username"];
@@ -20,14 +18,12 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     if (!$updated) {
         echo mysqli_error($connect);
     } else {
-        header("Location: profile.php");
+        header("Location: profile.php?id=" . $user_id);
         exit();
     }
 }
-
-$slq_query_user = "select users.id, username, email, COUNT(a.id) as count_articles from users left join web.articles a on users.id = a.user_id where users.id = $user_id";
+$slq_query_user = "select users.id, username, email, COUNT(a.id) as count_articles from users left join articles a on users.id = a.user_id where users.id = $user_id";
 $user_data = mysqli_query($connect, $slq_query_user)->fetch_assoc();
-
 ?>
 
 <!doctype html>
@@ -48,11 +44,11 @@ $user_data = mysqli_query($connect, $slq_query_user)->fetch_assoc();
 
         <div class="card">
             <div class="card__header">
-                <h1>Карточка профиля</h1>
+                <h1>Карточка пользователя: <?= $user_data["username"] ?></h1>
             </div>
 
             <div class="card__content" id="userDataContainer">
-                <h2 class="card__subtitle">Личные данные</h2>
+                <h2 class="card__subtitle">Информация о пользователе</h2>
                 <ul class="card__list">
                     <li>
                         <div class="card__name">
@@ -69,7 +65,7 @@ $user_data = mysqli_query($connect, $slq_query_user)->fetch_assoc();
                             <p id="countArticles">Количество написанных статей: <?= $user_data["count_articles"] ?></p>
                             <?php
                             $link_personal_articles = "./personal-articles.php?id=" . $user_data["id"];
-                            echo "<a href='$link_personal_articles'>Посмотреть:</a>";
+                            echo "<a href='$link_personal_articles'>Посмотреть</a>";
                             ?>
 
                         </div>
@@ -79,8 +75,9 @@ $user_data = mysqli_query($connect, $slq_query_user)->fetch_assoc();
                 <?php
                 if ($can_edit) {
                     echo "<div class='card__changeData' id='changeDataContainer'>";
-                    echo "<button onclick='showForm()'>Изменить данные?</button>";
+                    echo "<button class='change-btn' onclick='showForm()'>Изменить данные?</button>";
                     echo "</div>";
+                    echo "<div class='logout'><a href='./logout.php'>Выйти из аккаунта</a></div>";
                 }
                 ?>
             </div>

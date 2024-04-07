@@ -1,5 +1,5 @@
 <?php
-include_once("./config/db.php");
+require_once("./config/db.php");
 
 $id = -1;
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
@@ -7,8 +7,8 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $comment = $_POST["comment"];
     $user_id = $_POST["user_id"];
 
-    $insert_comment = "insert into comments (id, text, user_id, article_id) values (null, '$comment', $user_id, $id)";
-    mysqli_query($connect, $insert_comment);
+//    $insert_comment = "insert into comments (id, text, user_id, article_id) values (null, '$comment', $user_id, $id)";
+//    mysqli_query($connect, $insert_comment);
     header("Location: article-details.php?id=" . urldecode($id));
 }
 
@@ -19,9 +19,9 @@ if ($id === -1) {
 }
 
 if ($id !== -1) {
-    $fetch_article = "select articles.id, title, rating, user_id, date, username from articles join web.users u on u.id = articles.user_id where articles.id = '$id';";
+    $fetch_article = "select articles.id, title, rating, user_id, date, username from articles join users u on u.id = articles.user_id where articles.id = '$id';";
     $fetch_blocks = "select * from blocks where article_id='$id'";
-    $fetch_comments = "select u.id, text, username from comments join web.users u on u.id = comments.user_id where article_id = '$id' order by comments.id desc";
+    $fetch_comments = "select u.id, text, username from comments join users u on u.id = comments.user_id where article_id = '$id' order by comments.id desc";
 
     $article_details = mysqli_query($connect, $fetch_article)->fetch_assoc();
     $blocks = mysqli_query($connect, $fetch_blocks);
@@ -58,11 +58,13 @@ if (isset($_SESSION["user_id"])) {
             <div class="article">
                 <div class="article__header">
                     <div class="article__author">
-                        <p>Автор статьи: <?= $article_details["username"] ?></p>
+                        <a href="./profile.php?id=<?= $article_details["user_id"] ?>">Автор
+                            статьи: <?= $article_details["username"] ?></a>
                         <p>Дата создания: <?= $article_details["date"] ?></p>
                     </div>
                     <div class="article__title">
                         <h1><?= $article_details["title"] ?></h1>
+
                     </div>
                 </div>
 
@@ -70,7 +72,7 @@ if (isset($_SESSION["user_id"])) {
                     <?php
                     while ($block = $blocks->fetch_assoc()) {
                         if ($block["type"] === "text") {
-                            renderTextBlock($block["content"]);
+                            renderTextBlock($block["content"], $block["title"]);
                             continue;
                         }
                         if ($block["type"] === "code") {
@@ -87,18 +89,22 @@ if (isset($_SESSION["user_id"])) {
 
             <div class="comments" id="comment-form">
                 <?php
-                if ($auth_bool) {
-                    echo "<form class='comments-form' method='post'>";
-                    echo "<label for='comment'>Комментарий</label>";
-                    echo "<div class='comments-form__wrapper'>";
-                    echo "<textarea id='comment' name='comment' required></textarea>";
-                    echo "<input type='hidden' name='article_id' value='$id'/>";
-                    echo "<input type='hidden' name='user_id' value='$user_id'/>";
-                    echo "<input type='submit' value='Отправить' class='comments-form__submit'/>";
-                    echo "</div>";
-                    echo "</form>";
-                }
-                ?>
+                if ($auth_bool && $article_details["user_id"] != $user_id): ?>
+                    <form class='comments-form' method='post'>
+                        <label for='comment'>Комментарий</label>
+                        <div class='comments-form__wrapper'>
+                            <textarea id='comment' name='comment' required></textarea>
+                            <input type='hidden' name='article_id' value='$id'/>
+                            <input type='hidden' name='user_id' value='$user_id'/>
+                            <input type='submit' value='Отправить' class='comments-form__submit'/>
+                        </div>
+                    </form>
+
+                <?php else: ?>
+                    <div>
+                        Вы не можете комментировать свою статью
+                    </div>
+                <?php endif; ?>
 
                 <div class="comments-content">
                     <h2>Комментарии</h2>
@@ -124,21 +130,24 @@ if (isset($_SESSION["user_id"])) {
     </html>
 
 <?php
-function renderTextBlock($text)
+function renderTextBlock($text, $title): void
 {
     echo "<div>";
+    if ($title) {
+        echo "<h2>" . $title . "</h2>";
+    }
     echo "<p class='text'>$text</p>";
     echo "</div>";
 }
 
-function renderCodeBlock($code)
+function renderCodeBlock($code): void
 {
     echo "<pre class='code'>";
     echo "<code class='language-php'>" . nl2br(htmlspecialchars($code)) . "</code>";
     echo "</pre>";
 }
 
-function renderImageBlock($image_src, $label)
+function renderImageBlock($image_src, $label): void
 {
     echo "<figure class='image'>";
     echo "<img style='max-width: 100%' src='$image_src' alt='image'/>";

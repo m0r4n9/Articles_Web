@@ -5,6 +5,7 @@
 
 .content__header {
     width: 100%;
+    min-width: 700px;
     padding: 12px 10px;
     background-color: #fff;
     border-radius: 4px;

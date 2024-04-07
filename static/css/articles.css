@@ -1,6 +1,7 @@
 @import "reset.css";
 @import "navbar.css";
 @import "articleCard.css";
+@import "pagination-component.css";
 
 .app {
     width: 100vw;

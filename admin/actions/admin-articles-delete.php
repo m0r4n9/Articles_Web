@@ -8,7 +8,7 @@ if (isset($_SESSION["user_id"]) && isset($_SESSION["role"]) && $_SESSION["role"]
     exit();
 }
 
-include_once("../../config/db.php");
+require_once("../../config/db.php");
 
 
 if ($_SERVER["REQUEST_METHOD"] === "POST") {

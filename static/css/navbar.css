@@ -4,28 +4,24 @@
     background-color: white;
     display: flex;
     justify-content: center;
-
-    /*position: sticky;*/
-    /*top: 0;*/
-    /*left: 0;*/
-    /*right: 0;*/
-
-    /*z-index: 10;*/
 }
 
 .navbar {
     max-width: 80%;
     width: 100%;
+    height: 70px;
 
     display: flex;
     justify-content: space-between;
+    align-items: center;
 
     padding: 20px 0;
 
 }
 
 .navbar__leftSide {
-
+    display: flex;
+    align-items: center;
 }
 
 .navbar__list {
@@ -43,10 +39,16 @@
     border-bottom: 1px solid blue;
 }
 
+.navbar__rightSide {
+    position: relative;
+}
+
 .navbar__btn {
     padding: 8px 14px;
     border-radius: 4px;
+
     color: white;
+    font-size: 14px;
     background-color: #558DA9;
 
     transition: background-color 0.2s ease;
@@ -59,4 +61,121 @@
 .navbar__btnWrite {
     margin-right: 10px;
     cursor: pointer;
+}
+
+/* Dropdown Item */
+.popup {
+    position: absolute;
+    top: 40px;
+    right: 0;
+    background: white;
+    border-radius: 8px;
+
+    box-shadow: rgba(60, 64, 67, 0.3) 0 1px 2px 0, rgba(60, 64, 67, 0.15) 0 2px 6px 2px;
+
+    width: 240px;
+
+    padding: 12px 8px;
+}
+
+.authForm {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.wrapper-input input {
+    width: 100%;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.5);
+
+}
+
+.wrapper-input input:last-child {
+    margin-top: 12px;
+}
+
+.close {
+    color: #aaa;
+    float: right;
+    font-weight: bold;
+}
+
+.close:hover,
+.close:focus {
+    color: black;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.reg_info {
+    display: flex;
+    gap: 3px;
+
+    margin-top: 12px;
+    font-size: 12px;
+}
+
+.reg_info .reg_btn {
+    color: blue;
+}
+
+/* Search Articles Block */
+.navbar__search {
+    position: relative;
+}
+
+.found-articles {
+    width: 400px;
+    max-height: 600px;
+    overflow: auto;
+
+    padding: 10px 20px;
+
+    position: absolute;
+    top: 40px;
+    left: -90%;
+
+    z-index: 10;
+
+    background: white;
+    box-shadow: 1px 1px 1px 1px rgba(0, 0, 0, 0.5);
+}
+
+#found-articles-content {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+
+    margin-top: 12px;
+}
+
+.article-card {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+
+    overflow: hidden;
+    padding: 4px;
+
+    max-height: 120px;
+
+    border: 1px solid rgba(0, 0, 0, 0.5);
+    border-radius: 4px;
+}
+
+.article-card .preview img{
+    width: 120px;
+    object-fit: cover;
+
+    border-radius: 6px;
+}
+
+.article-card .title {
+    align-self: start;
+}
+
+#found-articles-title {
+    display: flex;
+    justify-content: space-between;
+
 }

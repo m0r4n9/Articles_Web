@@ -1,110 +1,11 @@
 <?php
-include_once("./config/db.php");
+require_once("./config/db.php");
 
 session_start();
 if (isset($_SESSION["user_id"])) {
     $user_id = $_SESSION["user_id"];
 }
 
-if ($_SERVER["REQUEST_METHOD"] === "POST") {
-    $title_article = $_POST["title"];
-    $category = $_POST["category"];
-    $date = date("Y-m-d");
-
-    $prev_image = $_FILES["image"];
-
-    $file_name = $prev_image['name'];
-    $file_tmp = $prev_image['tmp_name'];
-
-    $file_ext = pathinfo($file_name, PATHINFO_EXTENSION);
-    $new_file_name = uniqid('', true) . "." . $file_ext;
-    $destination = "static/images/" . $new_file_name;
-
-
-
-    $sql_insert_article = "insert into articles (id, title, category, rating, image, user_id, date) values (null, '$title_article', '$category', 0, '$destination', $user_id, '$date');";
-    $article = mysqli_query($connect, $sql_insert_article);
-
-    $new_article_id = mysqli_insert_id($connect);
-
-    if ($article) {
-        move_uploaded_file($file_tmp, $destination);
-        $article_id = mysqli_insert_id($connect);
-
-        $counter = 1;
-        $error_block = false;
-
-        while (isset($_POST["block_type_" . $counter])) {
-            $block_type = $_POST["block_type_" . $counter];
-
-            if (isset($_POST["block_deleted_" . $counter])) {
-                echo "SKIP!";
-                echo $_POST["block_deleted_ . $counter"] . " - " . $counter;
-                echo $block_type;
-            } else {
-                if ($block_type !== "image") {
-                    $block_content = $_POST["block_content_" . $counter];
-
-                    $query = "INSERT INTO blocks (id, title, type, content, label, article_id) VALUES (null, '', ?, ?, '', ?)";
-                    $stmt = mysqli_prepare($connect, $query);
-
-                    mysqli_stmt_bind_param($stmt, "sss", $block_type, $block_content, $article_id);
-
-                    mysqli_stmt_execute($stmt);
-
-
-                    if (mysqli_stmt_affected_rows($stmt) > 0) {
-                        $block = true;
-                    } else {
-                        $block = false;
-                    }
-
-                    mysqli_stmt_close($stmt);
-
-                } else {
-                    $block_image = $_FILES["block_content_" . $counter];
-
-                    $block_file_name = $block_image['name'];
-                    $block_file_tmp = $block_image['tmp_name'];
-
-                    $file_ext = pathinfo($block_file_name, PATHINFO_EXTENSION);
-                    $block_file_new_name = uniqid('', true) . "." . $file_ext;
-                    $block_image_destination = "static/images/" . $block_file_new_name;
-
-                    move_uploaded_file($block_file_tmp, $block_image_destination);
-
-                    if (move_uploaded_file($block_file_tmp, $block_image_destination)) {
-                        echo "File uploaded successfully.";
-                    } else {
-                        echo "Error uploading file: " . $_FILES["block_content_" . $counter]['error'];
-                    }
-
-                    $block = mysqli_query($connect, "INSERT INTO blocks (id, title, type, content, label, article_id) VALUES (null, '', '$block_type', '$block_image_destination', '', $article_id)");
-                }
-
-//                if (!$block) {
-//                    $error_block = true;
-//                    break;
-//                }
-            }
-
-            $counter++;
-        }
-
-
-
-        if ($error_block) {
-            echo "Произошла ошибка!";
-        }
-
-        header("Location: ./article-details.php?id=" . $new_article_id);
-
-    } else {
-        echo "Error inserting article: " . mysqli_error($connect);
-    }
-
-
-}
 ?>
 
 <!doctype html>
@@ -125,7 +26,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         ?>
 
         <div class="content">
-            <form method="post" class="form" enctype="multipart/form-data">
+            <form class="form" id="articleForm" enctype="multipart/form-data">
                 <div class="form__wrapper">
                     <label for="title">Заголовой статьи</label>
                     <input id="title" type="text" name="title" required class="form__input">
@@ -142,29 +43,30 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
                 <div class="form__wrapper">
                     <label for="preview">Главное изображение</label>
-                    <input id="preview" type="file" name="image" required>
+                    <input id="preview" type="file" name="image">
                 </div>
 
                 <input type="hidden" name="rating" value="0">
                 <input type="hidden" name="user_id" value="<?= $user_id ?>">
 
                 <div id="blocks-container" class="blocks-container">
-                    <div class="block__wrapper">
+                    <div class="block__wrapper" data-block-id="0">
                         <div>
-                            <label for="block_type_1">Тип блока:</label>
-                            <select name="block_type_1" id="block_type_1" onchange="changeContent(this, 1)">
-                                <option value="text">Текст</option>
-                                <option value="image">Изображение</option>
-                                <option value="code">Код</option>
-                            </select>
-                        </div>
-
-                        <div id="contentContainer_1">
-                            <label>
-                                Контент
-                                <textarea name="block_content_1" cols="40" rows="3"></textarea>
+                            <label>Тип блока:
+                                <select name="blocks[0][type]" class="block-type-select"
+                                        onchange="changeContent(this, 0)">
+                                    <option value="text">Текст</option>
+                                    <option value="image">Изображение</option>
+                                    <option value="code">Код</option>
+                                </select>
                             </label>
                         </div>
+                        <div class="block__content" data-content-id="0">
+                            <label>Контент
+                                <textarea name="blocks[0][content]"></textarea>
+                            </label>
+                        </div>
+                        <button class="removeBlockButton" type="button" style="display: none;">Удалить блок</button>
                     </div>
                 </div>
 
@@ -174,83 +76,101 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
 
                 <div class="form__footer">
-                    <input type="submit" value="Создать">
+                    <button type="button" id="submitArticle">Создать</button>
                 </div>
             </form>
         </div>
     </div>
 </div>
 
+<?php include("./components/footer.php") ?>
 <script>
-    document.addEventListener("DOMContentLoaded", function () {
-        let counter = 1;
-
-        function removeBlock(button, blockId) {
-            let blockDiv = button.parentElement;
-            blockDiv.classList.add("block-deleted");
-            let hiddenInput = document.createElement("input");
-            hiddenInput.type = "hidden";
-            hiddenInput.name = `block_deleted_${blockId}`;
-            hiddenInput.value = "1";
-            blockDiv.appendChild(hiddenInput);
+    $(document).ready(function () {
+        function updateRemoveButtons() {
+            const $blocks = $("#blocks-container .block__wrapper");
+            if ($blocks.length > 1) {
+                $blocks.find(".removeBlockButton").show();
+            } else {
+                $blocks.find(".removeBlockButton").hide();
+            }
         }
 
-        function addBlock() {
-            let blockId = ++counter;
-            let newDiv = document.createElement("div");
-            newDiv.className = "block__wrapper";
-            newDiv.innerHTML = `
-                            <div>
-                            <label for="block_type_${blockId}">Тип блока:</label>
-                                <select name="block_type_${blockId}" id="block_type_${blockId}" onchange="changeContent(this, ${blockId})">
-                                    <option value="text">Текст</option>
-                                    <option value="image">Изображение</option>
-                                    <option value="code">Код</option>
-                                </select>
-                        </div>
+        $("#blocks-container").on("click", ".removeBlockButton", function () {
+            $(this).closest(".block__wrapper").remove();
+            updateRemoveButtons();
+        });
 
-                        <div id="contentContainer_${blockId}" class="block__content">
-                            <label for="block_content_${blockId}">Контент</label>
-                            <textarea id="block_content_${blockId}" name="block_content_${blockId}"></textarea>
-                        </div>
+        $("#addBlockButton").click(function () {
+            let blockId = new Date().getTime();
+            let newDiv = $(`
+        <div class="block__wrapper" data-block-id="${blockId}">
+            <div>
+                <label>Тип блока:
+                    <select name="blocks[${blockId}][type]" onchange="changeContent(this, ${blockId})" class="block-type-select">
+                        <option value="text">Текст</option>
+                        <option value="image">Изображение</option>
+                        <option value="code">Код</option>
+                    </select>
+                </label>
+            </div>
+            <div class="block__content" data-content-id="${blockId}">
+                <label>Контент
+                    <textarea name="blocks[${blockId}][content]"></textarea>
+                </label>
+            </div>
+            <button class="removeBlockButton" type="button">Удалить блок</button>
+        </div>
+    `);
+            $("#blocks-container").append(newDiv);
+            updateRemoveButtons();
+        });
 
+        window.changeContent = function (select, blockId) {
+            const selectedType = $(select).val();
+            const contentContainer = $(`div[data-content-id='${blockId}']`);
+            contentContainer.empty();
 
-                        <button class="removeBlockButton" type="button">Удалить блок</button>
+            if (selectedType === "image") {
+                contentContainer.html(`
+                <label>Контент
+                    <input required type="file" name="blocks[${blockId}][content]">
+                </label>
+            `);
+            } else {
+                contentContainer.html(`
+                <label>Контент
+                    <textarea name="blocks[${blockId}][content]"></textarea>
+                </label>
+            `);
+            }
+        };
 
+        $("#submitArticle").click(function () {
+            const formData = new FormData($("#articleForm")[0]);
 
-                `;
-            document.getElementById("blocks-container").appendChild(newDiv);
-
-            newDiv.querySelector(".removeBlockButton").addEventListener("click", function () {
-                removeBlock(this, blockId);
+            const blocks = [];
+            $("#blocks-container .block__wrapper").each(function () {
+                const blockId = $(this).data('block-id');
+                const type = $(this).find('.block-type-select').val();
+                const content = $(this).find('[name^="blocks["][name$="][content]"]').val();
+                blocks.push({blockId, type, content});
             });
-        }
 
-        document.getElementById("addBlockButton").addEventListener("click", addBlock);
+            formData.append('blocks', JSON.stringify(blocks));
+
+            $.ajax({
+                url: './ajax/createArticle.php',
+                type: 'POST',
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function (response) {
+                    console.log('Ответ сервера: ', JSON.parse(response));
+                },
+            });
+        });
     });
 
-
-    function changeContent(select, blockNumber) {
-        let selectedType = select.value;
-        let contentContainer = document.getElementById(`contentContainer_${blockNumber}`);
-
-        contentContainer.innerHTML = "";
-
-        if (selectedType === "image") {
-            contentContainer.innerHTML = `
-                    <label>
-                        Контент
-                        <input required type="file" name="block_content_${blockNumber}">
-                    </label>
-                `;
-        } else {
-            contentContainer.innerHTML = `
-                    <label for="block_content_${blockNumber}">Контент</label>
-                    <textarea name="block_content_${blockNumber}"></textarea>
-                `;
-        }
-    }
 </script>
-
 </body>
 </html>

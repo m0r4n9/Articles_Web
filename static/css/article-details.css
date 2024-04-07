@@ -43,6 +43,7 @@
     overflow: auto;
     border: 1px solid #f0f0f0;
     border-radius: 4px;
+    font-family: 'Courier New', Courier, monospace;
 }
 
 .image {

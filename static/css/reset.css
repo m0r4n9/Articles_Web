@@ -2,6 +2,7 @@
     margin: 0;
     padding: 0;
     box-sizing: border-box;
+    font-family: 'PT Serif', serif;
 }
 
 input, button {
@@ -23,6 +24,8 @@ a {
     width: 100vw;
     min-height: 100vh;
     background-color: #F0F0F0;
+    font-family: 'PT Serif', serif;
+    padding: 0 0 140px;
 }
 
 .container {

@@ -1,36 +1,41 @@
 <?php
-include_once("./config/db.php");
+require_once("./config/db.php");
+
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
+
 
 $slq_query = "SELECT
     articles.id,
     articles.title,
     articles.rating,
     articles.date,
-    articles.image,
+    articles.image_url,
     articles.user_id,
-    web.users.username,
-    web.blocks.id AS block_id,
-    web.blocks.type,
-    web.blocks.content,
-    web.blocks.title AS block_title
+    users.username,
+    blocks.id AS block_id,
+    blocks.type,
+    blocks.content,
+    blocks.title AS block_title
 FROM
     articles
         JOIN
-    web.users ON articles.user_id = web.users.id
+    users ON articles.user_id = users.id
         JOIN
     (
         SELECT
             article_id,
             MIN(id) AS block_id
         FROM
-            web.blocks
+            blocks
         WHERE
                 type = 'text'
         GROUP BY
             article_id
     ) AS filtered_blocks ON articles.id = filtered_blocks.article_id
         JOIN
-    web.blocks ON filtered_blocks.block_id = web.blocks.id limit 5;";
+    blocks ON filtered_blocks.block_id = blocks.id where status != 'developing' order by articles.id desc limit 5;";
 $articles = mysqli_query($connect, $slq_query);
 ?>
 <!doctype html>
@@ -59,12 +64,17 @@ $articles = mysqli_query($connect, $slq_query);
             </div>
             <?php
             require_once("./components/render-article-card.php");
-            while ($data = $articles->fetch_assoc()) {
-                renderArticleCard($data);
+            if ($articles) {
+                while ($data = $articles->fetch_assoc()) {
+                    renderArticleCard($data);
+                }
+            } else {
+                echo "<h3>Статей нет</h3>";
             }
             ?>
         </div>
     </div>
 </div>
+<?php include('./components/footer.php') ?>
 </body>
 </html>
