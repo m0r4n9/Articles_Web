@@ -9,7 +9,7 @@ if (isset($_SESSION["user_id"])) {
 ?>
 
 <!doctype html>
-<html lang="en">
+<html lang="ru">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport"

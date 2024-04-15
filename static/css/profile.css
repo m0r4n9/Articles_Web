@@ -24,10 +24,6 @@
     margin-top: 20px;
 }
 
-.card__subtitle {
-
-}
-
 .card__list {
     list-style: circle;
 
@@ -78,7 +74,10 @@
     padding: 6px 12px;
     background-color: lightgray;
     border-radius: 4px;
+}
 
+.required {
+    border-color: red !important;
 }
 
 .save-btn {
@@ -105,4 +104,56 @@
 .change-btn:hover {
     background-color: black;
     color: white;
+}
+
+.edit__action {
+    display: flex;
+    gap: 16px;
+    margin-top: 20px;
+}
+
+.edit__btn, .cancel__btn, .save__btn {
+    padding: 4px 6px;
+    border-radius: 4px;
+
+    transition: background-color .3s ease, color .2s ease;
+}
+
+.edit__btn {
+    border: 1px solid black;
+}
+
+.edit__btn:hover {
+    background-color: black;
+    color: white;
+}
+
+.cancel__btn:hover {
+    background-color: red;
+    color: white;
+}
+
+
+.form-grid {
+    display: grid;
+    grid-template-columns: minmax(100px, 1fr) 1fr;
+    gap: 12px;
+
+    margin-top: 20px;
+}
+
+.form-grid label {
+    margin: 0;
+    white-space: normal;
+    overflow-wrap: break-word;
+}
+
+.wrapper {
+    z-index: 1;
+}
+
+.form-grid input {
+    border: 1px solid black;
+    border-radius: 4px;
+    padding: 4px;
 }

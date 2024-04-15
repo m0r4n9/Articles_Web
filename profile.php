@@ -4,24 +4,7 @@ $user_id = isset($_GET["id"]) ? intval($_GET["id"]) : -1;
 if (isset($_SESSION["user_id"]) && intval($_SESSION["user_id"]) === $user_id) {
     $can_edit = true;
 }
-
 require_once("./config/db.php");
-
-if ($_SERVER["REQUEST_METHOD"] === "POST") {
-    $username = $_POST["username"];
-    $email = $_POST["email"];
-
-
-    $updateQuery = "UPDATE users SET username='$username', email='$email' WHERE id=$user_id";
-    $updated = mysqli_query($connect, $updateQuery);
-
-    if (!$updated) {
-        echo mysqli_error($connect);
-    } else {
-        header("Location: profile.php?id=" . $user_id);
-        exit();
-    }
-}
 $slq_query_user = "select users.id, username, email, COUNT(a.id) as count_articles from users left join articles a on users.id = a.user_id where users.id = $user_id";
 $user_data = mysqli_query($connect, $slq_query_user)->fetch_assoc();
 ?>
@@ -39,83 +22,106 @@ $user_data = mysqli_query($connect, $slq_query_user)->fetch_assoc();
 <body>
 <div class="app">
     <div class="container">
-
         <?php include_once("./components/navbar.php") ?>
-
         <div class="card">
             <div class="card__header">
-                <h1>Карточка пользователя: <?= $user_data["username"] ?></h1>
+                <h1>Карточка пользователя: <span><?= $user_data["username"] ?></span></h1>
             </div>
-
+            <div class="card__email">
+                <p id="countArticles">Количество написанных статей: <?= $user_data["count_articles"] ?></p>
+                <a href="<?= "./personal-articles.php?id=" . $user_data["id"] ?>">Посмотреть</a>
+            </div>
             <div class="card__content" id="userDataContainer">
                 <h2 class="card__subtitle">Информация о пользователе</h2>
-                <ul class="card__list">
-                    <li>
-                        <div class="card__name">
-                            <p id="username">Имя: <?= $user_data["username"] ?></p>
+                <form id="profile-data" class="form-grid">
+                    <label for="name">Имя</label>
+                    <input id="name" name="name" value="<?= $user_data['username'] ?>" type="text"
+                           disabled>
+                    <label for="email">Электронная почта</label>
+                    <input id="email" name="email" value="<?= $user_data['email'] ?>" type="text" disabled>
+                    <label for="phone">Номер телефона</label>
+                    <input id="phone" name="phone" value="<?= $user_data['phone'] ?>" type="text" disabled>
+                    <?php if ($can_edit): ?>
+                        <div class="edit__action">
+                            <button type="button" class="edit__btn">Редактировать</button>
                         </div>
-                    </li>
-                    <li>
-                        <div class="card__email">
-                            <p id="email">Электронная почта: <?= $user_data["email"] ?></p>
-                        </div>
-                    </li>
-                    <li>
-                        <div class="card__email">
-                            <p id="countArticles">Количество написанных статей: <?= $user_data["count_articles"] ?></p>
-                            <?php
-                            $link_personal_articles = "./personal-articles.php?id=" . $user_data["id"];
-                            echo "<a href='$link_personal_articles'>Посмотреть</a>";
-                            ?>
-
-                        </div>
-                    </li>
-                </ul>
+                    <?php endif; ?>
+                </form>
 
                 <?php
                 if ($can_edit) {
-                    echo "<div class='card__changeData' id='changeDataContainer'>";
-                    echo "<button class='change-btn' onclick='showForm()'>Изменить данные?</button>";
-                    echo "</div>";
                     echo "<div class='logout'><a href='./logout.php'>Выйти из аккаунта</a></div>";
                 }
                 ?>
             </div>
-
-
-            <?php
-            if ($can_edit) {
-                include_once("./components/changeFormProfile.php");
-            }
-            ?>
-
         </div>
     </div>
 
+    <?php include_once("./components/footer.php") ?>
     <script>
-        function showForm() {
-            document.getElementById('userDataContainer').style.display = 'none';
-            document.getElementById('changeDataContainer').style.display = 'none';
-            document.getElementById('editForm').style.display = 'block';
+        $(document).ready(function () {
+            let originalValues = {};
 
-            document.getElementById('newUsername').value = '<?= $user_data["username"] ?>';
-            document.getElementById('newEmail').value = '<?= $user_data["email"] ?>';
-            document.getElementById('newCountArticles').value = '<?= $user_data["count_articles"] ?>';
-        }
+            $(".edit__btn").on('click', function () {
+                $(".edit__action").append("" +
+                    "<button type='button' class='save__btn'>Сохранить</button>" +
+                    "<button type='button' class='cancel__btn' >Отменить</button>");
 
-        function saveChanges() {
-            let newUsername = document.getElementById('newUsername').value;
-            let newEmail = document.getElementById('newEmail').value;
-            let newCountArticles = document.getElementById('newCountArticles').value;
+                $("input:disabled").each(function () {
+                    originalValues[this.id] = $(this).val();
+                    $(this).prop('disabled', false);
+                });
 
-            document.getElementById('username').innerText = 'Имя: ' + newUsername;
-            document.getElementById('email').innerText = 'Электронная почта: ' + newEmail;
-            document.getElementById('countArticles').innerText = 'Количество написанных статей: ' + newCountArticles;
+                $(this).hide();
+            });
 
-            document.getElementById('userDataContainer').style.display = 'block';
-            document.getElementById('changeDataContainer').style.display = 'block';
-            document.getElementById('editForm').style.display = 'none';
-        }
+            $('.edit__action').on('click', '.save__btn', function () {
+                const name_data = $("#name");
+                const email_data = $("#email");
+
+                if (!name_data.val()) {
+                    name_data.addClass('required');
+                    return;
+                }
+
+                if (!email_data.val()) {
+                    email_data.addClass('required');
+                    return;
+                }
+
+                $.ajax({
+                    url: './ajax/updateProfileData.php',
+                    type: 'POST',
+                    data: $("#profile-data").serialize(),
+                    success: function (response) {
+                        console.log("Response:", response);
+                        if (response.status === 'success') {
+                            $('.edit__btn').show();
+                            $('#profile-data button:gt(0)').remove();
+                            $(".card__header h1 span").text(response.name);
+
+                            $("#profile-data input").each(function () {
+                                $(this).prop('disabled', true);
+                            });
+                            originalValues = {};
+                        }
+                    }
+                })
+            });
+
+            $(".edit__action").on('click', '.cancel__btn', function () {
+                $(".edit__btn").show();
+
+                $(".form-grid input").each(function () {
+                    $(this).prop('disabled', true);
+                    $(this).val(originalValues[this.id]);
+                    $(this).removeClass('required');
+                });
+
+                $(this).remove();
+                $(".save__btn").remove();
+            });
+        });
     </script>
 
 </body>

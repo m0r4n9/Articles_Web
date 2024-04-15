@@ -75,7 +75,7 @@
 
     width: 240px;
 
-    padding: 12px 8px;
+    padding: 20px;
 }
 
 .authForm {
@@ -95,6 +95,10 @@
 }
 
 .close {
+    position: absolute;
+    top: 4px;
+    right: 12px;
+
     color: #aaa;
     float: right;
     font-weight: bold;

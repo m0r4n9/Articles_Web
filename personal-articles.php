@@ -9,7 +9,7 @@ if (isset($_GET["id"])) {
 $can_edit = $user_id == $creator_id;
 
 require_once("./config/db.php");
-$fetch_articles = "select articles.id as id, title, category, image, user_id, date, u.id as user_id, username from articles join web.users u on u.id = articles.user_id where user_id = $creator_id order by id desc";
+$fetch_articles = "select articles.id as id, title, category, image_url, user_id, date, u.id as user_id, username from articles join users u on u.id = articles.user_id where user_id = $creator_id order by id desc";
 $articles = mysqli_query($connect, $fetch_articles);
 ?>
 
@@ -26,18 +26,14 @@ $articles = mysqli_query($connect, $fetch_articles);
 <body>
 <div class="app">
     <div class="container">
-
-        <?php
-        include_once("./components/navbar.php");
-        ?>
-
+        <?php include_once("./components/navbar.php"); ?>
         <div class="articles">
             <?php
             require_once("./components/render-article-card.php");
             while ($data = $articles->fetch_assoc()):
                 $link_details = "/article-details.php?id=" . $data["id"];
                 ?>
-                <article>
+                <article data-article-id="<?= $data["id"] ?>">
                     <div class='article'>
                         <div>
                             <p>Автор: <?= $data["username"] ?></p>
@@ -55,7 +51,7 @@ $articles = mysqli_query($connect, $fetch_articles);
                                 <?php if ($can_edit): ?>
                                     <a style='margin-left: 20px;' href='./change-article.php?id=<?= $data["id"] ?>'
                                        class='article__btn'>Изменить</a>
-                                    <button class="delete-btn" data-article-id="<?= $data["id"] ?>">Удалить</button>
+                                    <button class="delete-btn" value="<?= $data['id'] ?>">Удалить</button>
                                 <?php endif; ?>
                             </div>
                         </div>
@@ -67,22 +63,34 @@ $articles = mysqli_query($connect, $fetch_articles);
 
     </div>
 </div>
+<?php include_once("./components/footer.php") ?>
 <script>
-    document.addEventListener('DOMContentLoaded', function () {
-        let deleteButtons = document.querySelectorAll('.delete-btn');
+    $(document).ready(function () {
+        $(".delete-btn").on('click', function () {
+            const article_id = $(this).val();
+            const confirmed = confirm('Вы уверены, что хотите удалить статью?');
 
-        deleteButtons.forEach(function (button) {
-            button.addEventListener('click', function () {
-                let articleId = button.getAttribute('data-article-id');
-                let confirmed = confirm('Вы уверены, что хотите удалить статью?');
-
-                if (confirmed) {
-                    window.location.href = './delete-article.php?action=delete&id=' + articleId;
-                }
-            });
-        });
+            if (confirmed) {
+                $.ajax({
+                    url: './ajax/deleteArticle.php',
+                    type: 'post',
+                    data: {
+                        article_id
+                    },
+                    success: function (response) {
+                        if (response.status === 'success') {
+                            $(`[data-article-id=${article_id}]`).remove();
+                        } else {
+                            console.log("Error:", response?.message);
+                        }
+                    },
+                    error: function (xhr) {
+                        console.log(xhr);
+                    }
+                });
+            }
+        })
     });
 </script>
-
 </body>
 </html>

@@ -2,7 +2,10 @@
 <script>
     $(document).ready(function () {
         let debounceTimer;
-        $('#search-articles').on('input', function () {
+
+        const $searchArticles = $('#search-articles');
+
+        $searchArticles.on('input', function () {
             clearTimeout(debounceTimer);
             debounceTimer = setTimeout(function () {
                 const query = $('#search-articles').val();
@@ -23,7 +26,7 @@
             }, 500);
         });
 
-        $('#search-articles').click(function () {
+        $searchArticles.click(function () {
             if ($('#search-articles').val()) {
                 $("#found-articles").show();
             }
@@ -61,13 +64,22 @@ if (!isset($_SESSION["user_id"])): ?>
                     type: "POST",
                     url: "./ajax/authUser.php",
                     data: $("#authForm").serialize(),
+                    beforeSend: function () {
+                        $(".auth__error").empty();
+                    },
                     success: function (response) {
+                        console.log(response);
                         if (response.status === 'success') {
                             location.reload();
                             $('#authPopup').slideUp({
                                 duration: 200
                             });
+                        } else {
+                            $('.auth__error').append(`<p>${response.message}</p>`);
                         }
+                    },
+                    error: function (xhr) {
+                        if (xhr.status === 401) $(".auth__error").html(`<p>${xhr?.responseJSON.message}</p>`);
                     }
                 });
 

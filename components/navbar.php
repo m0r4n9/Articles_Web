@@ -1,6 +1,9 @@
 <?php
 $activePage = basename($_SERVER['PHP_SELF'], ".php");
-session_start();
+
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
 
 $auth_bool = false;
 
@@ -57,7 +60,7 @@ if (isset($_SESSION["user_id"])) {
 
             <div id="authPopup" class="popup" style="display: none;">
                 <div class="popup-content">
-                    <span class="close">&times;</span>
+                    <button class="close">&times;</button>
                     <form id="authForm" class="authForm">
                         <div class="wrapper-input">
                             <input type="text" name="email" placeholder="Электронная почта" required>
@@ -68,6 +71,9 @@ if (isset($_SESSION["user_id"])) {
                     <div class="reg_info">
                         Нет аккаунта?
                         <a href="../reg.php" class="reg_btn">Зарегистрироваться</a>
+                    </div>
+                    <div class="auth__error">
+
                     </div>
                 </div>
             </div>

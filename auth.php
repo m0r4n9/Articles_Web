@@ -65,7 +65,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             </div>
 
             <div class="auth__form-footer">
-                <input type="submit" value="Войти">
+                <input id="create-account" type="submit" value="Войти">
                 <div>
                     <a href="./reg.php">Создать аккаунт?</a>
                 </div>
@@ -73,5 +73,33 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         </form>
     </div>
 </div>
+<script src="./static/js/jquery-3.7.1.js"></script>
+<script>
+    $(document).ready(function () {
+        const $buttonReg = $("#create-account");
+
+        $("#email").change(function () {
+            const email = $(this).val();
+            const regex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+            if (regex.test(email)) {
+                $(this).removeClass('invalid');
+                $buttonReg.prop('disabled', false);
+            } else {
+                $(this).addClass('invalid');
+                $buttonReg.prop('disabled', true);
+            }
+        });
+
+        $("#password").change(function () {
+            if ($(this).val()) {
+                $(this).removeClass('invalid');
+                $buttonReg.prop('disabled', false);
+            } else {
+                $(this).addClass('invalid');
+                $buttonReg.prop('disabled', true);
+            }
+        });
+    });
+</script>
 </body>
 </html>
